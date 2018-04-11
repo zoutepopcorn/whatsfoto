@@ -3,7 +3,7 @@
     "version":"0.0.2",
     "manifest_version":2,
     "description":"",
-	  "web_accessible_resources" : ["jquery.min.js", "ui.js"],
+	  "web_accessible_resources" : ["jquery.min.js",  "jszip.js", "jszip.ut.js", "filesaver.js", "ui.js"],
 	  "icons": {
 		"128": "icons/icon-128.png",
 		"48": "icons/icon-48.png"
