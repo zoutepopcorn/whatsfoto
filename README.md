@@ -31,6 +31,12 @@ All pictures are stored in a zip file
 
 Todo :triumph:
 
+:red_circle:  test
+
+:large_blue_circle: split numbers new line
+
+:large_blue_circle: get feedback
+
 
 # Licence
 Mit
