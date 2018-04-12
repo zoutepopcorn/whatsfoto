@@ -6,7 +6,10 @@
 
  https://github.com/LoranKloeze/WhatsAllApp
 
+
+ 2018 WhatsFoto 
  Edit by Johan Hoeksma
+
 */
 
 
