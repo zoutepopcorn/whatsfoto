@@ -89,7 +89,7 @@
         out.forEach((item) => {
           // item
           if (item.imgFull) {
-            zip.file(`${item.id.replace('@c.us','jpg')}`, urlToPromise(item.imgFull), {
+            zip.file(`${item.id.replace('@c.us','.jpg')}`, urlToPromise(item.imgFull), {
               binary: true
             });
           } else {
