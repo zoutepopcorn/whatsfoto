@@ -7,7 +7,7 @@
  https://github.com/LoranKloeze/WhatsAllApp
 
 
- 2018 WhatsFoto 
+ 2018 WhatsFoto
  Edit by Johan Hoeksma
 
 */
@@ -89,7 +89,7 @@
         out.forEach((item) => {
           // item
           if (item.imgFull) {
-            zip.file(`${item.id}`, urlToPromise(item.imgFull), {
+            zip.file(`${item.id.replace('@c.us','jpg')}`, urlToPromise(item.imgFull), {
               binary: true
             });
           } else {
@@ -101,7 +101,8 @@
           zip.generateAsync({
             type: "blob"
           }).then(function callback(blob) {
-            saveAs(blob, "example.zip");
+            const d = new Date();
+            saveAs(blob, `whats-foto(${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()})`);
           });
           console.log(out);
         } else {
