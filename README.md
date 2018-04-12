@@ -38,6 +38,15 @@ Todo :triumph:
 :large_blue_circle: get feedback
 
 
+# Errors
+
+:large_blue_circle: Please use the latest chrome version
+
+Please open an issue.
+
+Try to open the console and see the Errors
+
+
 # Licence
 Mit
 Based on chrome extension Loran Kloeze :).
