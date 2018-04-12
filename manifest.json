@@ -1,6 +1,6 @@
 {
     "name":"WhatsFoto",
-    "version":"0.0.2",
+    "version":"0.0.3",
     "manifest_version":2,
     "description":"",
 	  "web_accessible_resources" : ["jquery.min.js",  "jszip.js", "jszip.ut.js", "filesaver.js", "ui.js"],

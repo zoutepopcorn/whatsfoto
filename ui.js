@@ -9,31 +9,37 @@
  Edit by Johan Hoeksma
 */
 
+
+
 (function() {
   'use strict';
-  const PREF = "31621863966";
-  let begin = 4000;
-  const END = 4030;
-  let pics = 0;
-  const PICS_MAX = 10; // TODO: tweak, not tested.
+
+  const logErr = (msg) => {
+    console.log(`%c ${msg}`, 'background: red; color: white; display: block;');
+  }
+
+  const logInf = (msg) => {
+    console.log(`%c ${msg}`, 'background: blue; color: white; display: block;');
+  }
+
+  const logWarn = (msg) => {
+    console.log(`%c ${msg}`, 'background: orange; color: white; display: block;');
+  }
+
+  const logSuc = (msg) => {
+    console.log(`%c ${msg}`, 'background: green; color: white; display: block;');
+  }
+
+  logInf('start')
+
   document.addEventListener('openPic', (e) => {
     const data = e.detail;
-    console.log(" " + JSON.stringify(data));
+    console.log(JSON.stringify(data));
     downAll(data.phone);
-    // picture(data.phone, (out) => {
-    //   console.log("ben ik " + out);
-    //   //chrome.tabs.create({ url: "http://nu.nl" });
-    //   const html = `<div id="overlay">
-    //                           <img src="${out.img}">
-    //                       </div>  `;
-    //
-    //   $("body").append(html);
-    //
-    // });
+
   });
 
   var evt = document.createEvent("CustomEvent");
-
 
   const splitNrs = (nrs) => {
     let output = nrs.split(',')
@@ -79,16 +85,25 @@
       .then((out) => {
         out.forEach((item) => {
           // item
-          zip.file(`${item.id}`, urlToPromise(item.imgFull), {
-            binary: true
-          });
+          if (item.imgFull) {
+            zip.file(`${item.id}`, urlToPromise(item.imgFull), {
+              binary: true
+            });
+          } else {
+            logErr(`${item.id} no image found`)
+          }
         })
-        zip.generateAsync({
-          type: "blob"
-        }).then(function callback(blob) {
-          saveAs(blob, "example.zip");
-        });
-        console.log(out);
+        if (out.length > 0) {
+          logSuc(`aantal bestanden in zip: ${out.length}`);
+          zip.generateAsync({
+            type: "blob"
+          }).then(function callback(blob) {
+            saveAs(blob, "example.zip");
+          });
+          console.log(out);
+        } else {
+          console.log()
+        }
       })
   }
 
@@ -113,12 +128,9 @@
           "thumb": d.img,
           "img": d.imgFull
         });
-        // toDB({"img" : d.img, "full" : d.imgFull});
       }
     }, (e) => {
-      //cb(e);
-      // Server is throttling/rate limiting, we try it again
-      //picture(nr);
+
     });
   }
 })();
