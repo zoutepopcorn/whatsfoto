@@ -29,7 +29,7 @@ All pictures are stored in a zip file
 
 # Todo
 
-Todo :D.
+Todo :triumph:
 
 
 # Licence
