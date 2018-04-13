@@ -1,28 +1,27 @@
 $("#get").click(() => {
-    let phone = $("#phone").val();
-// var evt=document.createEvent("CustomEvent");
-// evt.initCustomEvent("yourCustomEvent", true, true, data);
-// document.dispatchEvent(evt);
+  const phone = $("#phone").val();
 
-    chrome.tabs.executeScript(null, { code : `
+  chrome.tabs.executeScript(null, {
+    //
+    code: `
           document.dispatchEvent(new CustomEvent('openPic', {
               detail: {
                 command:  'foto',
                 phone: '${phone}'
               }
           }));
-        ` }, (o) => {
-        console.log(o);
-        //  alert(phone);
-    });
-    //chrome.tabs.create({ url: "http://nu.nl" });
-
+        `
+  }, (o) => {
+    console.log(o);
+  });
 });
 
-/*
-chrome.tabs.executeScript(null, { code : `document.dispatchEvent(new Event('MY_API'));` }, (o) => {
-    console.log("o.test");
-    console.log(o.test);
-    //alert(phone);
+window.addEventListener('error', function(event) {
+  $("#error").append(`${event}<br>`)
+})
+
+$("#reload").click(() => {
+  chrome.runtime.reload();
 });
-*/
+
+$("#info").html(`v. ${chrome.runtime.getManifest().version}`);

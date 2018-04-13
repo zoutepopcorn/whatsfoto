@@ -12,105 +12,110 @@
 
 */
 (function() {
-    'use strict';
+  'use strict';
+  const logSuc = console.log.bind(console, '%c %s', 'background: green; color: white');
+  const logErr = console.log.bind(console, '%c %s', 'background: red; color: white');
+  const logInf = console.log.bind(console, '%c %s', 'background: blue; color: white');
 
-    const logErr = (msg) => {
-      return console.log(`%c ${msg}`, 'background: red; color: white; display: block;');
-    }
+  console.log();
+  logInf('start')
 
-    const logInf = (msg) => {
-      return console.log(`%c ${msg}`, 'background: blue; color: white; display: block;');
-    }
-
-    const logWarn = (msg) => {
-      return console.log(`%c ${msg}`, 'background: orange; color: white; display: block;');
-    }
-
-    const logSuc = (msg) => {
-      return console.log(`%c ${msg}`, 'background: green; color: white; display: block;');
-    }
-
-    console.log();
-    logInf('start')
-
-    const splitNrs = (nrs) => { // CSV to array
-      let output = nrs.split(',')
-      console.log(output);
-      let myArr = [];
-      output.forEach((el) => {
-        el = el.replace(/[^0-9]/, '');
-        if (el.indexOf("06") == 0) {
-          el = el.replace("06", "316");
-        }
-        if (el.length == 11) {
-          myArr.push(el)
-        }
-
-      })
-      return myArr;
-    }
-
-    const getRange = (start, end) => {
-      let telArr = [];
-      while (start <= end) {
-        telArr.push(start);
-        start++;
+  const splitNrs = (nrs) => { // CSV to array
+    let output = nrs.split(',')
+    console.log(output);
+    let myArr = [];
+    output.forEach((el) => {
+      el = el.replace(/[^0-9]/, '');
+      if (el.indexOf("06") == 0) {
+        el = el.replace("06", "316");
       }
-      return telArr;
-    }
+      if (el.length == 11) {
+        myArr.push(el)
+      }
+    })
+    return myArr;
+  }
 
-    // TODO: make multiple listeners
-    document.addEventListener('openPic', (e) => {
-      const data = e.detail;
-      console.log(JSON.stringify(data));
-      // getAll(splitNrs(data.phone)); // download
-      // getAll(splitNrs(data.phone));
+  const getRange = (nrs) => { // get array from ["0600", "0699"] start / end
+    const split = splitNrs(nrs);
+    const end = split[1];
+    let start = split[0];
+    let telArr = [];
+    while (start <= end) {
+      telArr.push(start);
+      start++;
+    }
+    return telArr;
+  }
+
+  const getName = (prefix) => {
+    const d = new Date();
+    return `${prefix}(${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()})`;
+  }
+
+  const saveTxt = (filename, text) => {
+    var blob = new Blob([text], {
+      type: "text/plain",
+      endings: "transparent"
     });
+    window.saveAs(blob, filename);
+  }
 
+  // TODO: make multiple listeners
+  document.addEventListener('openPic', (e) => {
+    const data = e.detail;
+    logInf(`openPic`);
+    console.log(JSON.stringify(data));
 
-
-
-    const scrape = (images) => {
-      // Make cb function for it
-      console.log('images');
-      out.forEach((item) => {
-        // item
-        if (item.imgFull) {
-          console.log('item');
-        } else {
-          logErr(`${item.id} no image found`)
-        }
-      })
-
-      if (out.length > 0) {
-        logSuc(`aantal bestanden in zip: ${out.length}`);
-        zip.generateAsync({
-          type: "blob"
-        }).then(function callback(blob) {
-          const d = new Date();
-          saveAs(blob, `whats-foto(${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()})`);
-        });
-        console.log(out);
-      } else {
-        console.log('nothing found')
-      }
-    }
-
-    let getAll = (nrs, cb) => {
-      const urlToPromise = (url) => {
-        return new Promise(function(resolve, reject) {
-          JSZipUtils.getBinaryContent(url, function(err, data) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(data);
-            }
-          });
-        });
-      }
-      nrs.forEach((number) => {
-        console.log(number);
-        findAll.push(Store.ProfilePicThumb.find(`${number}@c.us`));
+    // 'secret' scraping
+    console.log(data.phone);
+    if (data.phone.indexOf('S') == 0) {
+      getAll(getRange(data.phone), (info) => {
+        logSuc('return from Prom')
+        console.log(info);
+        let out = "";
+        info.forEach((it) => {
+          out += `${it.id}\t${it.imgFull}\r\n`;
+        })
+        saveTxt(getName("whats-urls"), out);
       });
-      Promise.all(findAll).then(cb);
     }
+    // getAll(splitNrs(data.phone)); // download
+    // getAll(splitNrs(data.phone));
+  });
+
+
+  const scrape = (images) => {
+    // Make cb function for it
+    console.log('images');
+    out.forEach((item) => {
+      // item
+      if (item.imgFull) {
+        console.log('item');
+      } else {
+        logErr(`${item.id} no image found`)
+      }
+    })
+
+    if (out.length > 0) {
+      logSuc(`aantal bestanden in zip: ${out.length}`);
+      zip.generateAsync({
+        type: "blob"
+      }).then(function callback(blob) {
+        const d = new Date();
+        saveAs(blob, `whats-foto(${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()})`);
+      });
+      console.log(out);
+    } else {
+      console.log('nothing found')
+    }
+  }
+
+  let getAll = (nrs, cb) => {
+    let findAll = [];
+    nrs.forEach((number) => {
+      findAll.push(Store.ProfilePicThumb.find(`${number}@c.us`));
+    });
+    Promise.all(findAll).then(cb);
+  }
+})();
