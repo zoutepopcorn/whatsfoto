@@ -75,7 +75,12 @@
         console.log(info);
         let out = "";
         info.forEach((it) => {
-          out += `${it.id}\t${it.imgFull}\r\n`;
+          if (it.imgFull) {
+            out += `${it.id}\t${it.imgFull}\r\n`;
+          } else if (it.xtag) {
+            out += `${it.id}\t${it.imgFull}\r\n`;
+          }
+
         })
         saveTxt(getName("whats-urls"), out);
       });
