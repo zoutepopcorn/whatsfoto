@@ -1,9 +1,9 @@
 {
     "name":"WhatsFoto",
-    "version":"0.0.3",
+    "version":"0.0.4",
     "manifest_version":2,
     "description":"",
-	  "web_accessible_resources" : ["jquery.min.js",  "jszip.js", "jszip.ut.js", "filesaver.js", "ui.js"],
+	  "web_accessible_resources" : ["lib/jquery.min.js",  "lib/jszip.js", "lib/jszip.ut.js", "lib/filesaver.js", "inject_main.js"],
 	  "icons": {
 		"128": "icons/icon-128.png",
 		"48": "icons/icon-48.png"
@@ -11,13 +11,13 @@
 	 "browser_action": {
     		"default_icon": "icons/icon-48.png",
         "default_title": "",
-        "default_popup": "pop/pop.html"
+        "default_popup": "pop/popup.html"
 	  },
     "content_scripts": [
       {
         "matches": ["https://web.whatsapp.com/*"],
-        "css": ["overlay.css"],
-        "js": ["jquery.min.js", "content.js"],
+        "css": [],
+        "js": ["content.js"],
         "run_at": "document_end",
         "content_security_policy" : "script-src 'self' https://api.mlab.com/*; object-src 'self'"
       }
