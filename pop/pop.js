@@ -1,6 +1,5 @@
 $("#get").click(() => {
   const phone = $("#phone").val();
-
   chrome.tabs.executeScript(null, {
     //
     code: `
