@@ -1,6 +1,6 @@
 {
     "name":"WhatsFoto",
-    "version":"0.0.4",
+    "version":"0.0.3",
     "manifest_version":2,
     "description":"",
 	  "web_accessible_resources" : ["lib/jquery.min.js",  "lib/jszip.js", "lib/jszip.ut.js", "lib/filesaver.js", "inject_main.js"],
@@ -17,7 +17,7 @@
       {
         "matches": ["https://web.whatsapp.com/*"],
         "css": [],
-        "js": ["content.js"],
+        "js": ["lib/jquery.min.js", "content.js"],
         "run_at": "document_end",
         "content_security_policy" : "script-src 'self' https://api.mlab.com/*; object-src 'self'"
       }
