@@ -1,5 +1,5 @@
 /*
- (c) 2018 WhatsFoto Edit by Johan Hoeksma
+ (c) 2018 WhatsFoto by Johan Hoeksma
  based on (c) 2017 - Loran Kloeze - loran@ralon.nl
 */
 (function() {
@@ -8,6 +8,106 @@
   const logErr = console.log.bind(console, '%c %s', 'background: red; color: white');
   const logInf = console.log.bind(console, '%c %s', 'background: blue; color: white');
   const logWarn = console.log.bind(console, '%c %s', 'background: orange; color: white');
+  // window.Store = {};
+  window.WLAPStore = {};
+  window.WLAPWAPStore = {};
+  const scripts = document.getElementsByTagName('script');
+  const regExAppScr = /\/app\..+.js/;
+  const regExApp2Scr = /\/app2\..+.js/;
+  let appScriptLocation = '';
+  let app2ScriptLocation = '';
+
+  const sleep = (ms) => {
+    return new Promise((res) => {
+      setTimeout(() => {
+        return res();
+      }, ms)
+    });
+  }
+
+  const grepFunctionNames = function() {
+    fetch(app2ScriptLocation).then(e => {
+      var reader = e.body.getReader();
+      var js_src = "";
+
+      return reader.read().then(function readMore({
+        done,
+        value
+      }) {
+        var td = new TextDecoder("utf-8");
+        var str_value = td.decode(value);
+        if (done) {
+          js_src += str_value;
+          var regExDynNameStore = /'"(\w+)"':function\(e,t,a\)\{\"use strict\";e\.exports=\{AllStarredMsgs:/;
+          var res = regExDynNameStore.exec(js_src);
+          var funcName = res[1];
+          webpackJsonp([], {
+            [funcName]: (x, y, z) => window.WLAPStore = z('"' + funcName + '"')
+          }, funcName);
+          console.log('Created Store');
+          return;
+        }
+
+        js_src += str_value;
+        return reader.read().then(readMore);
+
+      })
+
+    }).then(() => {
+      fetch(appScriptLocation).then(e => {
+        var reader = e.body.getReader();
+        var js_src = "";
+
+        return reader.read().then(function readMore({
+          done,
+          value
+        }) {
+          var td = new TextDecoder("utf-8");
+          var str_value = td.decode(value);
+          if (done) {
+            js_src += str_value;
+            var regExDynNameStore = /Wap:n\('"(\w+)"'\)/;
+            var res = regExDynNameStore.exec(js_src);
+            var funcName = res[1];
+            webpackJsonp([], {
+              [funcName]: (x, y, z) => window.WLAPWAPStore = z('"' + funcName + '"')
+            }, funcName);
+            console.log('Created Store WAP');
+            // whenStoreIsReady()
+            return;
+          }
+
+          js_src += str_value;
+          return reader.read().then(readMore);
+
+        })
+      })
+    })
+  }
+
+  const grepScriptTags = async function() {
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].src;
+      if (regExAppScr.exec(src) != null) {
+        appScriptLocation = src;
+      }
+
+      if (regExApp2Scr.exec(src) != null) {
+        app2ScriptLocation = src;
+      }
+    }
+    if (appScriptLocation === '' || app2ScriptLocation == '') {
+      console.log('DOM not ready for WhatsAllApp yet');
+      await sleep(1000);
+      grepScriptTags();
+    } else {
+      console.log('DOM ready for WhatsAllApp! Let\'s continue...');
+      grepFunctionNames();
+    }
+  }
+
+  grepScriptTags();
+
 
   logInf('whatsfoto ui.js init')
 
@@ -15,7 +115,7 @@
     logSuc(nrs)
     let findAll = [];
     nrs.forEach((number) => {
-      findAll.push(Store.ProfilePicThumb.find(`${number}@c.us`));
+      findAll.push(WLAPStore.ProfilePicThumb.find(`${number}@c.us`));
     });
     return new Promise.all(findAll);
   }
@@ -118,5 +218,4 @@
       getAll(NRS).then(saveList);
     }
   });
-
 })();
